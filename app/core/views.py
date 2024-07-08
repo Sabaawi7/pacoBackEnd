@@ -68,6 +68,7 @@ class UserView(APIView):
         return Response(serializer.data)
 
 class UserIDListAPIView(APIView):
+     permission_classes = [AllowAny]
      def get(self, request):
           users = UserIDList.objects.all()
           serializer = UserIDListSerializer(users, many=True)
@@ -92,14 +93,7 @@ class UserIDListAPIView(APIView):
 
             if serializer.is_valid():
                 serializer.save()
-                payload = {
-                    'userid': user_id_value,
-                    'exp': datetime.datetime.now() + datetime.timedelta(minutes=60),
-                    'iat': datetime.datetime.now()
-                }
-                token = jwt.encode(payload, 'secret', algorithm='HS256')
                 response = Response()
-                response.set_cookie(key='UserID', value=token, httponly=True)
                 response.data = {
                     "message": "UserID created successfully",
                     "userid": user_id_value
@@ -139,6 +133,7 @@ class UserIDListDetailsAPIView(APIView):
 # Man muss eine Post anfrage schicken und daten übergeben um Daten zu erhalten
 # wie in den beispielen unten erklärt
 class AnswersAPIView(APIView):
+    permission_classes = [AllowAny]
     permission_classes = [AllowAny]
 
     def post(self, request):
