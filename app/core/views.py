@@ -11,7 +11,7 @@ from rest_framework import status, generics
 from rest_framework.views import APIView
 from rest_framework.exceptions import AuthenticationFailed
 import datetime
-from .x_data_utils import get_all_interview_data_db, get_interview_config,  user_id
+from .x_data_utils import get_all_interview_data_db, get_interview_config,  user_id, answer_post_view, get_interview_config_db
 from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -68,6 +68,7 @@ class UserView(APIView):
         return Response(serializer.data)
 
 class UserIDListAPIView(APIView):
+     permission_classes = [AllowAny]
      def get(self, request):
           users = UserIDList.objects.all()
           serializer = UserIDListSerializer(users, many=True)
@@ -92,14 +93,7 @@ class UserIDListAPIView(APIView):
 
             if serializer.is_valid():
                 serializer.save()
-                payload = {
-                    'userid': user_id_value,
-                    'exp': datetime.datetime.now() + datetime.timedelta(minutes=60),
-                    'iat': datetime.datetime.now()
-                }
-                token = jwt.encode(payload, 'secret', algorithm='HS256')
                 response = Response()
-                response.set_cookie(key='UserID', value=token, httponly=True)
                 response.data = {
                     "message": "UserID created successfully",
                     "userid": user_id_value
@@ -139,6 +133,7 @@ class UserIDListDetailsAPIView(APIView):
 # Man muss eine Post anfrage schicken und daten übergeben um Daten zu erhalten
 # wie in den beispielen unten erklärt
 class AnswersAPIView(APIView):
+    permission_classes = [AllowAny]
 
     def post(self, request):
         try:
