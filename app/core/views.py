@@ -11,7 +11,7 @@ from rest_framework import status, generics
 from rest_framework.views import APIView
 from rest_framework.exceptions import AuthenticationFailed
 import datetime
-from .x_data_utils import get_all_interview_data_db, get_interview_config,  user_id
+from .x_data_utils import get_all_interview_data_db, get_interview_config,  user_id, get_interview_config_db, answer_post_view
 from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -139,6 +139,7 @@ class UserIDListDetailsAPIView(APIView):
 # Man muss eine Post anfrage schicken und daten übergeben um Daten zu erhalten
 # wie in den beispielen unten erklärt
 class AnswersAPIView(APIView):
+    permission_classes = [AllowAny]
 
     def post(self, request):
         try:
